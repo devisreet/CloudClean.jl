@@ -450,6 +450,6 @@ function proc_discrete_dt(x_locs,y_locs,raw_image,mask_image;Np=33,widx=129,widy
         println("Finished $cntStar stars in tile ($jx, $jy)")
         flush(stdout)
     end
-    return cov, predcov
+    return cov, predcovar
 end
     #removed things at the end
