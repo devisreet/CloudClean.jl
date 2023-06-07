@@ -2,6 +2,7 @@ using StatsBase
 
 export proc_continuous
 export proc_discrete
+export proc_discrete_dt
 
 """
     proc_continuous(raw_image, mask_image; Np=33, widx=129, widy=widx, tilex=1, tiley=tilex, seed=2021, ftype::Int=32, ndraw=0) -> out_mean, out_draw
@@ -450,4 +451,5 @@ function proc_discrete_dt(x_locs,y_locs,raw_image,mask_image;Np=33,widx=129,widy
         flush(stdout)
     end
     return cov, predcov
+end
     #removed things at the end
