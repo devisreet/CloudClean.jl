@@ -425,7 +425,7 @@ function proc_discrete_dt(x_locs,y_locs,raw_image,mask_image;Np=33,widx=129,widy
                 data_in = in_image_raw[cov_stamp[1],cov_stamp[2]]
 
                 # try
-                    result = condCovEst_wdiag(cov,μ,kstar,data_in,Np=Np,export_mean=true,n_draw=ndraw,seed=seed)
+                    result = condCovEst_wdiag_dt(cov,μ,kstar,data_in,Np=Np,export_mean=true,n_draw=ndraw,seed=seed)
                     predcovar = result[1]
                     stat_out = result[2]
                     
