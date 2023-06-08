@@ -130,7 +130,6 @@ function condCovEst_wdiag_dt(cov_loc,μ,km,data_in;Np=33,export_mean=false,n_dra
     icovkkCcovkkstar = icov_kkC\cov_kkstar
     predcovar = Symmetric(cov_kstarkstar - (cov_kkstar'*icovkkCcovkkstar))
     ipcovC = cholesky(predcovar)
-    print(predcovar)
 
     @views uncond_input = data_in[:]
     @views cond_input = data_in[:].- μ
@@ -152,8 +151,6 @@ function condCovEst_wdiag_dt(cov_loc,μ,km,data_in;Np=33,export_mean=false,n_dra
         draw_out[kstar,:] .= repeat(kstarpred,outer=[1 n_draw]) .+ noise'
         push!(out,draw_out)
     end
-    print(predcovar)
-    print("hi")
     return predcovar, out
 end
 
