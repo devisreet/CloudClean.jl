@@ -115,6 +115,42 @@ function condCovEst_wdiag(cov_loc,μ,km,data_in;Np=33,export_mean=false,n_draw=0
         push!(out,draw_out)
     end
 
+    return out
+end
+
+function condCovEst_wdiag_dt(cov_loc,μ,km,data_in;Np=33,export_mean=false,n_draw=0,seed=2022)
+    k = .!km
+    kstar = km
+    cov_kk = Symmetric(cov_loc[k,k])
+    cov_kkstar = cov_loc[k,kstar];
+    cov_kstarkstar = cov_loc[kstar,kstar];
+    icov_kkC = cholesky(cov_kk)
+    icovkkCcovkkstar = icov_kkC\cov_kkstar
+    predcovar = Symmetric(cov_kstarkstar - (cov_kkstar'*icovkkCcovkkstar))
+    ipcovC = cholesky(predcovar)
+    print(predcovar)
+
+    @views uncond_input = data_in[:]
+    @views cond_input = data_in[:].- μ
+
+    kstarpredn = (cond_input[k]'*icovkkCcovkkstar)'
+    kstarpred = kstarpredn .+ μ[kstar]
+
+    out = []
+    if export_mean
+        mean_out = copy(data_in)
+        mean_out[kstar] .= kstarpred
+        push!(out,mean_out)
+    end
+    if n_draw != 0
+        sqrt_cov = ipcovC.U
+        noise = randn(n_draw,size(sqrt_cov)[1])*sqrt_cov
+
+        draw_out = repeat(copy(data_in)[:],outer=[1 n_draw])
+        draw_out[kstar,:] .= repeat(kstarpred,outer=[1 n_draw]) .+ noise'
+        push!(out,draw_out)
+    end
+
     return predcovar, out
 end
 
