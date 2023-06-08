@@ -5,6 +5,8 @@ export condCovEst_wdiag
 export gen_pix_mask_trivial
 export gen_pix_mask_circ
 
+export condCovEst_wdiag_dt
+
 """
     gen_pix_mask_trivial(kmasked2d; Np=33) -> kstar, kcond
 
@@ -150,7 +152,8 @@ function condCovEst_wdiag_dt(cov_loc,μ,km,data_in;Np=33,export_mean=false,n_dra
         draw_out[kstar,:] .= repeat(kstarpred,outer=[1 n_draw]) .+ noise'
         push!(out,draw_out)
     end
-
+    print(predcovar)
+    print("break")
     return predcovar, out
 end
 
