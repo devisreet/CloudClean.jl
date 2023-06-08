@@ -153,7 +153,7 @@ function condCovEst_wdiag_dt(cov_loc,μ,km,data_in;Np=33,export_mean=false,n_dra
         push!(out,draw_out)
     end
     print(predcovar)
-    print("break")
+    print("hi")
     return predcovar, out
 end
 
