@@ -425,33 +425,9 @@ function proc_discrete_dt(x_locs,y_locs,raw_image,mask_image;Np=33,widx=129,widy
                 data_in = in_image_raw[cov_stamp[1],cov_stamp[2]]
 
                 # try
-                    result = condCovEst_wdiag_dt(cov,μ,kstar,data_in,Np=Np,export_mean=true,n_draw=ndraw,seed=seed);
-                    global predcovar = result[1];
-                    stat_out = result[2];
-                    
-                    data_in[kstar].=stat_out[1][kstar]
-                    in_image_raw[cov_stamp[1],cov_stamp[2]].=data_in
-                    
-                    data_in = out_mean[cov_stamp[1],cov_stamp[2]]
-                    data_in[kstar].=stat_out[1][kstar]
-                    out_mean[cov_stamp[1],cov_stamp[2]].=data_in
-                    for i=1:ndraw
-                        draw_in = out_draw[cov_stamp[1],cov_stamp[2],i]
-                        draw_in[kstar].= stat_out[2][kstar,i]
-                        out_draw[cov_stamp[1],cov_stamp[2],i].=draw_in
-                    end
-                    kmasked2d[kstar].=false
-                    in_bmaskd[cov_stamp[1],cov_stamp[2]].=kmasked2d
-                    cntStar0 += cntStar
-                # catch
-                #     println("Positive Definite Error")
-                # end
+                    predcovar = condCovEst_wdiag_dt(cov,μ,kstar,data_in,Np=Np,export_mean=true,n_draw=ndraw,seed=seed);
+                    return cov, predcovar
             end
         end
-        cntStar0 += cntStar
-        println("Finished $cntStar stars in tile ($jx, $jy)")
-        flush(stdout)
     end
-    return cov, predcovar
 end
-    #removed things at the end

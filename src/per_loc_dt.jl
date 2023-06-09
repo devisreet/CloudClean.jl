@@ -151,7 +151,7 @@ function condCovEst_wdiag_dt(cov_loc,μ,km,data_in;Np=33,export_mean=false,n_dra
         draw_out[kstar,:] .= repeat(kstarpred,outer=[1 n_draw]) .+ noise'
         push!(out,draw_out)
     end
-    return predcovar, out
+    return predcovar
 end
 
 """
