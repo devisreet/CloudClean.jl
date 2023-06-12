@@ -224,18 +224,16 @@ chisquared_xinfill_cinfill -->
 chisquared_xreal_cinfill ---> xreal is x0, sub
 "
 
-function chisquared_xreal_ctot(img, icov, cenx, ceny, dv)
+function chisquared_xreal_ctot(img, icov, Np, cenx, ceny, dv)
     x0 =img[(cenx-dv):(cenx+dv),(ceny-dv):(ceny+dv)];
     x0_flat =vec(x0);
-    Np = size(icov)[1]
     chi_squared = x0_flat'*(icov\x0_flat)/Np^2;
     return chi_squared
 end
 
 
-function chisquared_xinfill_ctot(star_stats, icov, cenx, ceny, dv)
+function chisquared_xinfill_ctot(star_stats, icov, Np, cenx, ceny, dv)
     xinfill_Np = vec(star_stats[2][(cenx-dv):(cenx+dv),(ceny-dv):(ceny+dv),1]) #infilled data, one specific draw
-    Np = size(icov)[1]
     chi_squared =  xinfill_Np'*(icov\xinfill_Np)/Np^2;
     return chi_squared
 end
