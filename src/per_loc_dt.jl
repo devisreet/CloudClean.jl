@@ -263,9 +263,9 @@ function chisquared_xreal_ctot(img, icov, Np, cenx, ceny)
     dv = (Np-1)÷2;
     x0 =img[(cenx-dv):(cenx+dv),(ceny-dv):(ceny+dv)];
     #print(size(x0))
-    print(size(icov))
+    #print(size(icov))
     x0_flat =vec(x0);
-    print(size(x0_flat))
+    #print(size(x0_flat))
     chi_squared = x0_flat'*(icov\x0_flat)/Np^2;
     print(chi_squared)
     return chi_squared
