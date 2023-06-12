@@ -574,6 +574,8 @@ function chi_squared_stats(x_locs,y_locs,raw_image,mask_image,img;Np=33, widx=12
     #print(size(ipredcov))
     cenx = x_locs[1];
     ceny = y_locs[1];
+    print(cenx)
+    print(ceny)
     
     x_real_ctot = chisquared_xreal_ctot(img, icov, Np, cenx, ceny);
     #print(x_real_ctot)
