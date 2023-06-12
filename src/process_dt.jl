@@ -564,13 +564,20 @@ function proc_discrete_revised_dt(x_locs,y_locs,raw_image,mask_image;Np=33,widx=
 end
 
 
-function chi_squared_stats(x_locs,y_locs,raw_image,mask_image,img;Np=33, widx=129,widy=widx,tilex=1,tiley=tilex,seed=2021,rlim=625,ndraw=0)
+function chi_squared_stats(x_locs,y_locs,raw_image,mask_image,img;Np=33, widx=129,widy=widx,tilex=1,ftype=64, tiley=tilex,seed=2021,rlim=625,ndraw=0)
     dv = (Np-1)÷2;
 
-    cov, predcov, star_stats = proc_discrete_revised_dt(x_locs,y_locs,raw_image,mask_image,Np=Np, widx=widx,widy=widy,tilex=tilex,tiley=tiley,seed=seed,rlim=rlim,ndraw=ndraw);
+    cov, predcov, star_stats = proc_discrete_revised_dt(x_locs,y_locs,raw_image,mask_image,Np=Np, widx=widx,widy=widy,ftype=ftype, tilex=tilex,tiley=tiley,seed=seed,rlim=rlim,ndraw=ndraw);
     icov = cholesky(cov);
     ipredcov = cholesky(predcov);
+    
+    x_real_ctot = chisquared_xreal_ctot(img, icov, Np, x_locs[1], y_locs[1], dv);
+    xinfill_ctot = chisquared_xinfill_ctot(star_stats, icov, Np, x_locs[1], y_locs[1], dv);
+    xinfill_cinfill = chisquared_xinfill_cinfill(star_stats, mask_image, ipredcov);
+    xreal_cinfill = chisquared_xreal_cinfill(img, mask_image, ipredcov);
+    
 
-    return chisquared_xreal_ctot(img, icov, Np, x_locs[1], y_locs[1], dv), chisquared_xinfill_ctot(star_stats, icov, Np, x_locs[1], y_locs[1], dv),  chisquared_xinfill_cinfill(star_stats, mask_image, ipredcov), chisquared_xreal_cinfill(img, mask_image, ipredcov)
+    return x_real_ctot, xinfill_ctot, xinfill_cinfill,xreal_cinfill
+    
 end 
     
