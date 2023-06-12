@@ -572,8 +572,8 @@ function chi_squared_stats(x_locs,y_locs,raw_image,mask_image,img;Np=33, widx=12
     ipredcov = cholesky(predcov);
     #print(size(icov))
     #print(size(ipredcov))
-    cenx = x_locs[1]
-    ceny = y_locs[1]
+    cenx = x_locs[1];
+    ceny = y_locs[1];
     
     x_real_ctot = chisquared_xreal_ctot(img, icov, Np, cenx, ceny);
     #print(x_real_ctot)
