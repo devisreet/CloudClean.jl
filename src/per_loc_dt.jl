@@ -6,6 +6,7 @@ export gen_pix_mask_trivial
 export gen_pix_mask_circ
 
 export condCovEst_wdiag_dt
+export condCovEst_wdiag_revised_dt
 
 export chisquared_xreal_ctot
 export chisquared_xinfill_ctot
@@ -159,6 +160,40 @@ function condCovEst_wdiag_dt(cov_loc,μ,km,data_in;Np=33,export_mean=false,n_dra
     return predcovar
 end
 
+function condCovEst_wdiag_revised_dt(cov_loc,μ,km,data_in;Np=33,export_mean=false,n_draw=0,seed=2022)
+    k = .!km
+    kstar = km
+    cov_kk = Symmetric(cov_loc[k,k])
+    cov_kkstar = cov_loc[k,kstar];
+    cov_kstarkstar = cov_loc[kstar,kstar];
+    icov_kkC = cholesky(cov_kk)
+    icovkkCcovkkstar = icov_kkC\cov_kkstar
+    predcovar = Symmetric(cov_kstarkstar - (cov_kkstar'*icovkkCcovkkstar))
+    ipcovC = cholesky(predcovar)
+
+    @views uncond_input = data_in[:]
+    @views cond_input = data_in[:].- μ
+
+    kstarpredn = (cond_input[k]'*icovkkCcovkkstar)'
+    kstarpred = kstarpredn .+ μ[kstar]
+
+    out = []
+    if export_mean
+        mean_out = copy(data_in)
+        mean_out[kstar] .= kstarpred
+        push!(out,mean_out)
+    end
+    if n_draw != 0
+        sqrt_cov = ipcovC.U
+        noise = randn(n_draw,size(sqrt_cov)[1])*sqrt_cov
+
+        draw_out = repeat(copy(data_in)[:],outer=[1 n_draw])
+        draw_out[kstar,:] .= repeat(kstarpred,outer=[1 n_draw]) .+ noise'
+        push!(out,draw_out)
+    end
+    return predcovar, out
+end
+
 """
     build_cov!(cov::Array{T,2},μ::Array{T,1},cx::Int,cy::Int,bimage::Array{T,2},bism::Array{T,4},Np::Int,widx::Int,widy::Int) where T <:Union{Float32,Float64}
 
@@ -230,7 +265,6 @@ function chisquared_xreal_ctot(img, icov, Np, cenx, ceny, dv)
     chi_squared = x0_flat'*(icov\x0_flat)/Np^2;
     return chi_squared
 end
-
 
 function chisquared_xinfill_ctot(star_stats, icov, Np, cenx, ceny, dv)
     xinfill_Np = vec(star_stats[2][(cenx-dv):(cenx+dv),(ceny-dv):(ceny+dv),1]) #infilled data, one specific draw
