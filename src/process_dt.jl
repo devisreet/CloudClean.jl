@@ -604,7 +604,7 @@ function varyr_chi_squared_stats(x_locs,y_locs,raw_image,img;Np=33, widx=129,wid
     # for i in range(0, isqrt(Np)): 
     for i in 0:loops
         r=i 
-        bimage = zeros(Bool,size(out_image));
+        bimage = zeros(Bool,size(raw_image));
         circmask = .!kstar_circle_mask(Np,rlim=r);
         bimage[(cenx-dv):(cenx+dv),(ceny-dv):(ceny+dv)].=circmask;
         out_image[bimage].=0
