@@ -4,8 +4,8 @@ export proc_continuous
 export proc_discrete
 export proc_discrete_dt
 
-export chi_squared_stats
 export proc_discrete_revised_dt
+export chi_squared_stats
 """
     proc_continuous(raw_image, mask_image; Np=33, widx=129, widy=widx, tilex=1, tiley=tilex, seed=2021, ftype::Int=32, ndraw=0) -> out_mean, out_draw
 
@@ -564,10 +564,8 @@ function proc_discrete_revised_dt(x_locs,y_locs,raw_image,mask_image;Np=33,widx=
 end
 
 
-function chi_squared_stats(x_locs,y_locs,raw_image,mask_image, img;Np=33,r=4^2, widx=129,widy=widx,tilex=1,tiley=tilex,seed=2021,ftype::Int=32,rlim=625,ndraw=0)
-    Np = 35;   #35
-    halfNp = (Np-1)÷2;
-    dv = halfNp;
+function chi_squared_stats(x_locs,y_locs,raw_image,mask_image,img;Np=33, widx=129,widy=widx,tilex=1,tiley=tilex,seed=2021,ftype::Int=32,rlim=625,ndraw=0)
+    dv = (Np-1)÷2;
 
     cov, predcovar, star_stats = proc_discrete_revised_dt(x_locs,y_locs,raw_image,mask_image,Np=Np, widx=widx,widy=widy,tilex=tilex,tiley=tiley,seed=seed,ftype::Int=32,rlim=rlim,ndraw=ndraw);
     icov = cholesky(cov);
