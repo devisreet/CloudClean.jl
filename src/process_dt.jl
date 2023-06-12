@@ -588,3 +588,30 @@ function chi_squared_stats(x_locs,y_locs,raw_image,mask_image,img;Np=33, widx=12
     
 end 
     
+function varyr_chi_squared_stats(x_locs,y_locs,raw_image,r,img;Np=33, widx=129,widy=widx,tilex=1,ftype=64, tiley=tilex,seed=2021,rlim=625,ndraw=1, infill_num=1)
+    
+    cenx = x_locs[1]
+    ceny = y_locs[1]
+    dv = (Np-1)÷2
+    
+    loops = isqrt(Np)
+    chi_squared = Vector{Float64}()
+    #loop here 
+    #initialize empty array of arbitrary size 
+    
+    
+    # for i in range(0, isqrt(Np)): 
+    for i in 0:loops
+        r=i 
+        bimage = zeros(Bool,size(out_image));
+        circmask = .!kstar_circle_mask(Np,rlim=r);
+        bimage[(cenx-dv):(cenx+dv),(ceny-dv):(ceny+dv)].=circmask;
+        out_image[bimage].=0
+    
+        chi_squared_vals = chi_squared_stats(x_locs,y_locs,raw_image,mask_image,img, Np=Np, widx=widx,widy=widy,tilex=tilex,ftype=ftype, tiley=tiley,seed=seed,rlim=rlim,ndraw=ndraw, infill_num=infill_num)
+        append!(chi_squared, chi_squared_vals)
+        #append chi_squared_vals
+    end
+    return chi_squared
+    
+end
