@@ -210,3 +210,39 @@ function build_cov!(cov::Array{T,2},μ::Array{T,1},cx::Int,cy::Int,bimage::Array
     cov .*= (widx*widy)/((widx*widy)-1)
     return
 end
+
+"
+Compute Various Chi-Squared Values 
+chisquared_xreal_ctot --> 
+chisquared_xinfill_ctot --> 
+chisquared_xinfill_cinfill -->
+chisquared_xreal_cinfill ---> xreal is x0, sub
+"
+
+func chisquared_xreal_ctot(img, icov, cenx, ceny, dv)
+    x0 =img[(cenx-dv):(cenx+dv),(ceny-dv):(ceny+dv)];
+    x0_flat =vec(x0);
+    chi_squared = x0_flat'*(icov\x0_flat)/Np^2;
+    return chi_squared
+end
+
+
+func chisquared_xinfill_ctot(star_stats, icov, cenx, ceny, dv)
+    xinfill_Np = vec(star_stats[2][(cenx-dv):(cenx+dv),(ceny-dv):(ceny+dv),1]) #infilled data, one specific draw
+    chi_squared =  xinfill_Np'*(icov\xinfill_Np)/Np^2;
+    return chi_squared
+end
+
+func chisquared_xinfill_cinfill(star_stats,  bimage, ipredcov)
+    infill_pix = count(bimage)
+    xinfill = star_stats[2][bimage,1];
+    chi_squared = xinfill'*(ipredcov\xinfill)/infill_pix
+    return chi_squared
+end
+
+func chisquared_xreal_cinfill(img, bimage, ipredcov)
+    infill_pix = count(bimage)
+    xi_sub =vec(img[bimage]);
+    chi_squared = xi_sub'*(ipredcov\xi_sub)/infill_pix
+    return chi_squared
+end
