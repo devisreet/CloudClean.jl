@@ -273,7 +273,7 @@ function chisquared_xinfill_ctot(star_stats, icov, Np, cenx, ceny, infill_num)
     #print(cenx)
     #print(ceny)
     xinfill_Np = vec(star_stats[2][(cenx-dv):(cenx+dv),(ceny-dv):(ceny+dv),infill_num]); #infilled data, one specific draw
-    print(size(xinfill_Np))
+    #print(size(xinfill_Np))
     chi_squared = xinfill_Np'*(icov\xinfill_Np)/Np^2;
     return chi_squared
 end
