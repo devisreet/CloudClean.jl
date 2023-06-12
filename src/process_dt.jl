@@ -1,4 +1,5 @@
 using StatsBase
+using LinearAlgebra
 
 export proc_continuous
 export proc_discrete
@@ -574,12 +575,13 @@ function chi_squared_stats(x_locs,y_locs,raw_image,mask_image,img;Np=33, widx=12
     ipredcov = cholesky(predcov);
     
     x_real_ctot = chisquared_xreal_ctot(img, icov, Np, x_locs[1], y_locs[1], dv);
+    print(x_real_ctot)
     xinfill_ctot = chisquared_xinfill_ctot(star_stats, icov, Np, x_locs[1], y_locs[1], dv);
     xinfill_cinfill = chisquared_xinfill_cinfill(star_stats, mask_image, ipredcov);
     xreal_cinfill = chisquared_xreal_cinfill(img, mask_image, ipredcov);
     
 
-    return x_real_ctot, xinfill_ctot, xinfill_cinfill,xreal_cinfill
+    return x_real_ctot, xinfill_ctot, xinfill_cinfill, xreal_cinfill
     
 end 
     
