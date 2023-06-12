@@ -267,20 +267,20 @@ function chisquared_xreal_ctot(img, icov, Np, cenx, ceny)
     return chi_squared
 end
 
-function chisquared_xinfill_ctot(star_stats, icov, Np, cenx, ceny, infill_num)
+function chisquared_xinfill_ctot(star_stats2, icov, Np, cenx, ceny, infill_num)
     dv = (Np-1)÷2;
     #print(dv)
     #print(cenx)
     #print(ceny)
-    xinfill_Np = vec(star_stats[2][(cenx-dv):(cenx+dv),(ceny-dv):(ceny+dv),infill_num]); #infilled data, one specific draw
+    xinfill_Np = vec(star_stats2[(cenx-dv):(cenx+dv),(ceny-dv):(ceny+dv),infill_num]); #infilled data, one specific draw
     #print(size(xinfill_Np))
     chi_squared = xinfill_Np'*(icov\xinfill_Np)/Np^2;
     return chi_squared
 end
 
-function chisquared_xinfill_cinfill(star_stats, bimage, ipredcov, infill_num)
+function chisquared_xinfill_cinfill(star_stats2, bimage, ipredcov, infill_num)
     infill_pix = count(bimage);
-    xinfill = star_stats[2][bimage,infill_num];
+    xinfill = star_stats2[bimage,infill_num];
     #print(size(xinfill));
     chi_squared = xinfill'*(ipredcov\xinfill)/infill_pix;
     return chi_squared
