@@ -578,14 +578,14 @@ function chi_squared_stats(x_locs,y_locs,raw_image,mask_image,img;Np=33, widx=12
     #print(cenx)
     #print(ceny)
     
-    x_real_ctot = chisquared_xreal_ctot(img, icov, Np, cenx, ceny);
+    xreal_ctot = chisquared_xreal_ctot(img, icov, Np, cenx, ceny);
     #print(x_real_ctot)
     xinfill_ctot = chisquared_xinfill_ctot(star_stats2, icov, Np, cenx, ceny, infill_num);
     xinfill_cinfill = chisquared_xinfill_cinfill(star_stats2, mask_image, ipredcov, infill_num);
     xreal_cinfill = chisquared_xreal_cinfill(img, mask_image, ipredcov);
     
 
-    return x_real_ctot, xinfill_ctot, xinfill_cinfill, xreal_cinfill
+    return xreal_ctot, xinfill_ctot, xinfill_cinfill, xreal_cinfill
     
 end 
     
@@ -596,9 +596,10 @@ function varyr_chi_squared_stats(x_locs,y_locs,raw_image,img;Np=33, widx=129,wid
     dv = (Np-1)÷2
     
     loops = isqrt(Np)
-    chi_squared = Vector{Float64}()
-    #loop here 
-    #initialize empty array of arbitrary size 
+    chi_squared_xreal_ctot = Vector{Float64}()
+    chi_squared_xinfill_ctot = Vector{Float64}()
+    chi_squared_xinfill_cinfill= Vector{Float64}()
+    chi_squared_xreal_cinfill = Vector{Float64}()
     
     
     # for i in range(0, isqrt(Np)): 
@@ -610,9 +611,14 @@ function varyr_chi_squared_stats(x_locs,y_locs,raw_image,img;Np=33, widx=129,wid
         raw_image[bimage].=0
     
         chi_squared_vals = chi_squared_stats(x_locs,y_locs,raw_image,bimage,img, Np=Np, widx=widx,widy=widy,tilex=tilex,ftype=ftype, tiley=tiley,seed=seed,rlim=rlim,ndraw=ndraw, infill_num=infill_num)
-        append!(chi_squared, chi_squared_vals)
+        
+        
+        append!(chi_squared_xreal_ctot, chi_squared_vals[1])
+        append!(chi_squared_xinfill_ctot, chi_squared_vals[2])
+        append!(chi_squared_xinfill_cinfill, chi_squared_vals[3])
+        append!(chi_squared_xreal_cinfill, chi_squared_vals[4])
         #append chi_squared_vals
     end
-    return chi_squared
+    return chi_squared_xreal_ctot,chi_squared_xinfill_ctot, chi_squared_xinfill_cinfill, chi_squared_xreal_cinfill
     
 end
