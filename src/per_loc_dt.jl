@@ -279,7 +279,7 @@ function chisquared_xinfill_ctot(star_stats, icov, Np, cenx, ceny, infill_num)
     return chi_squared
 end
 
-function chisquared_xinfill_cinfill(star_stats,  bimage, ipredcov, infill_num)
+function chisquared_xinfill_cinfill(star_stats, bimage, ipredcov, infill_num)
     infill_pix = count(bimage)
     xinfill = star_stats[2][bimage,infill_num];
     print(size(xinfill))
