@@ -579,7 +579,6 @@ function chi_squared_stats(x_locs,y_locs,raw_image,mask_image,img;Np=33, widx=12
     
     x_real_ctot = chisquared_xreal_ctot(img, icov, Np, cenx, ceny);
     #print(x_real_ctot)
-    print(size(star_stats2))
     xinfill_ctot = chisquared_xinfill_ctot(star_stats2, icov, Np, cenx, ceny, infill_num);
     xinfill_cinfill = chisquared_xinfill_cinfill(star_stats2, mask_image, ipredcov, infill_num);
     xreal_cinfill = chisquared_xreal_cinfill(img, mask_image, ipredcov);
