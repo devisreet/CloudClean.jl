@@ -568,6 +568,8 @@ function chi_squared_stats(x_locs,y_locs,raw_image,mask_image,img;Np=33, widx=12
     dv = (Np-1)÷2;
 
     cov, predcov, star_stats = proc_discrete_revised_dt(x_locs,y_locs,raw_image,mask_image,Np=Np, widx=widx,widy=widy,ftype=ftype, tilex=tilex,tiley=tiley,seed=seed,rlim=rlim,ndraw=ndraw);
+    size(cov)
+    size(predcov)
     icov = cholesky(cov);
     ipredcov = cholesky(predcov);
     
