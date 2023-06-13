@@ -529,11 +529,11 @@ function proc_discrete_revised_dt(x_locs,y_locs,raw_image,mask_image;Np=33,widx=
                 cov_stamp = cx[i]-radNp:cx[i]+radNp,cy[i]-radNp:cy[i]+radNp
                     
                 kmasked2d = in_bmaskd[cov_stamp[1],cov_stamp[2]]
-                kstar, kcond = gen_pix_mask_circ(kmasked2d,circmask;Np=Np)
+                global kstar, kcond = gen_pix_mask_circ(kmasked2d,circmask;Np=Np)
                 data_in = in_image_raw[cov_stamp[1],cov_stamp[2]]
 
                 # try
-                    global predcovar, kstar, stat_out = condCovEst_wdiag_revised_dt(cov,μ,kstar,data_in,Np=Np,export_mean=true,n_draw=ndraw,seed=seed);
+                    global predcovar, stat_out = condCovEst_wdiag_revised_dt(cov,μ,kstar,data_in,Np=Np,export_mean=true,n_draw=ndraw,seed=seed);
                     data_in[kstar].=stat_out[1][kstar]
                     in_image_raw[cov_stamp[1],cov_stamp[2]].=data_in
                     
