@@ -594,7 +594,8 @@ function varyr_chi_squared_stats(x_locs,y_locs,raw_image,img;Np=33, widx=129,wid
     ceny = y_locs[1]
     dv = (Np-1)÷2
     
-    loops = isqrt(dv)
+    #loops = isqrt(dv)
+    loops = isqrt(Np^2÷3)
     
     #initialize
     chi_squared_xreal_ctot = Vector{Float64}()
