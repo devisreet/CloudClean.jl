@@ -1,4 +1,4 @@
-Susing LinearAlgebra
+using LinearAlgebra
 
 export build_cov!
 export condCovEst_wdiag
