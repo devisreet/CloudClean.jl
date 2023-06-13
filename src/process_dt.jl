@@ -578,10 +578,12 @@ function chi_squared_stats(x_locs,y_locs,raw_image,mask_image,img;Np=33, widx=12
     #print(ceny)
     
     xreal_ctot = chisquared_xreal_ctot(img, icov, mean_real, Np, cenx, ceny);
-    #print(x_real_ctot)
-    xinfill_ctot = chisquared_xinfill_ctot(star_stats2, icov, mean_infill, Np, cenx, ceny, infill_num);
+    #xinfill_ctot = chisquared_xinfill_ctot(star_stats2, icov, mean_infill, Np, cenx, ceny, infill_num);
+    xinfill_ctot = chisquared_xinfill_ctot(star_stats2, icov, mean_real, Np, cenx, ceny, infill_num); #other interp 
+    
     xinfill_cinfill = chisquared_xinfill_cinfill(star_stats2, kstar, ipredcov, mean_infill, cenx, ceny, Np, infill_num);
-    xreal_cinfill = chisquared_xreal_cinfill(img, kstar, ipredcov, mean_real, cenx, ceny, Np);
+    #xreal_cinfill = chisquared_xreal_cinfill(img, kstar, ipredcov, mean_real, cenx, ceny, Np);
+    xreal_cinfill = chisquared_xreal_cinfill(img, kstar, ipredcov, mean_infill, cenx, ceny, Np); #other interp
     
 
     return xreal_ctot, xinfill_ctot, xinfill_cinfill, xreal_cinfill
