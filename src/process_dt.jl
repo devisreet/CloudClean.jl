@@ -533,7 +533,7 @@ function proc_discrete_revised_dt(x_locs,y_locs,raw_image,mask_image;Np=33,widx=
                 data_in = in_image_raw[cov_stamp[1],cov_stamp[2]]
 
                 # try
-                    global predcovar, global kstar, stat_out = condCovEst_wdiag_revised_dt(cov,μ,kstar,data_in,Np=Np,export_mean=true,n_draw=ndraw,seed=seed);
+                    global predcovar, kstar, stat_out = condCovEst_wdiag_revised_dt(cov,μ,kstar,data_in,Np=Np,export_mean=true,n_draw=ndraw,seed=seed);
                     data_in[kstar].=stat_out[1][kstar]
                     in_image_raw[cov_stamp[1],cov_stamp[2]].=data_in
                     
