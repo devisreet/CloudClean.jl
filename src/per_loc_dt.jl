@@ -278,9 +278,9 @@ end
 function chisquared_xinfill_ctot(star_stats2, icov, mean_infill, Np, cenx, ceny, infill_num)
     dv = (Np-1)÷2;
     xinfill_Np = vec(star_stats2[(cenx-dv):(cenx+dv),(ceny-dv):(ceny+dv),infill_num]); #infilled data, one specific draw
-    print(size(mean_infill))
-    print(size(vec(mean_infill)))
-    print(size(xinfill_Np))
+    #print(size(mean_infill))
+    #print(size(vec(mean_infill)))
+    #print(size(xinfill_Np))
     xinfill_Np_minus_mean = xinfill_Np-vec(mean_infill)
     chi_squared = xinfill_Np_minus_mean'*(icov\xinfill_Np_minus_mean)/Np^2;
     return chi_squared
