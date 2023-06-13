@@ -162,18 +162,18 @@ end
 
 function condCovEst_wdiag_revised_dt(cov_loc,μ,km,data_in;Np=33,export_mean=false,n_draw=0,seed=2022)
     k = .!km
-    print(count(k))
+    #print(count(k))
     kstar = km
-    print(size(kstar))
-    print(count(kstar))
+    #print(size(kstar))
+    #print(count(kstar))
     cov_kk = Symmetric(cov_loc[k,k])
     cov_kkstar = cov_loc[k,kstar];
     cov_kstarkstar = cov_loc[kstar,kstar];
-    print(size(cov_kstarkstar))
+    #print(size(cov_kstarkstar))
     icov_kkC = cholesky(cov_kk)
     icovkkCcovkkstar = icov_kkC\cov_kkstar
     predcovar = Symmetric(cov_kstarkstar - (cov_kkstar'*icovkkCcovkkstar))
-    print(size(predcovar))
+    #print(size(predcovar))
     ipcovC = cholesky(predcovar)
 
     @views uncond_input = data_in[:]
@@ -196,7 +196,7 @@ function condCovEst_wdiag_revised_dt(cov_loc,μ,km,data_in;Np=33,export_mean=fal
         draw_out[kstar,:] .= repeat(kstarpred,outer=[1 n_draw]) .+ noise'
         push!(out,draw_out)
     end
-    return predcovar, out
+    return predcovar, kstar, out
 end
 
 """
@@ -283,17 +283,17 @@ function chisquared_xinfill_ctot(star_stats2, icov, Np, cenx, ceny, infill_num)
     return chi_squared
 end
 
-function chisquared_xinfill_cinfill(star_stats2, bimage, ipredcov, infill_num)
-    infill_pix = count(bimage);
-    xinfill = star_stats2[bimage,infill_num];
-    #print(size(xinfill));
+function chisquared_xinfill_cinfill(star_stats2, kstar, ipredcov, cenx, ceny, Np, infill_num)
+    dv = (Np-1)÷2;
+    infill_pix = count(kstar);
+    xinfill = vec(star_stats2[(cenx-dv):(cenx+dv),(ceny-dv):(ceny+dv),infill_num][kstar]); 
     chi_squared = xinfill'*(ipredcov\xinfill)/infill_pix;
     return chi_squared
 end
 
-function chisquared_xreal_cinfill(img, bimage, ipredcov)
-    infill_pix = count(bimage)
-    xi_sub =vec(img[bimage]);
+function chisquared_xreal_cinfill(img, kstar, ipredcov, cenx, ceny, Np)
+    infill_pix = count(kstar)
+    xi_sub =vec(img[(cenx-dv):(cenx+dv),(ceny-dv):(ceny+dv)][kstar]);
     #print(size(xi_sub))
     chi_squared = xi_sub'*(ipredcov\xi_sub)/infill_pix
     return chi_squared
