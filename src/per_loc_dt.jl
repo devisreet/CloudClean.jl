@@ -182,14 +182,14 @@ function condCovEst_wdiag_revised_dt(cov_loc,μ,km,data_in;Np=33,export_mean=fal
     kstarpredn = (cond_input[k]'*icovkkCcovkkstar)'
     kstarpred = kstarpredn .+ μ[kstar]
     
-    print(size(μ))
+    #print(size(μ)) --> flattened version of mean
 
     out = []
     if export_mean
         mean_out = copy(data_in)
         mean_out[kstar] .= kstarpred
         push!(out,mean_out)
-        print(size(mean_out))
+        #print(size(mean_out))
     end
     if n_draw != 0
         sqrt_cov = ipcovC.U
@@ -267,38 +267,39 @@ chisquared_xinfill_cinfill -->
 chisquared_xreal_cinfill ---> xreal is x0, sub
 "
 
-function chisquared_xreal_ctot(img, icov, Np, cenx, ceny)
+function chisquared_xreal_ctot(img, icov, mean_infill, Np, cenx, ceny)
     dv = (Np-1)÷2;
     x0 =img[(cenx-dv):(cenx+dv),(ceny-dv):(ceny+dv)];
-    x0_flat =vec(x0);
-    chi_squared = x0_flat'*(icov\x0_flat)/Np^2;
+    x0_minus_mean_flat =vec(x0)-vec(mean_infill);
+    chi_squared = x0_minus_mean_flat'*(icov\x0_minus_mean_flat)/Np^2;
     return chi_squared
 end
 
-function chisquared_xinfill_ctot(star_stats2, icov, Np, cenx, ceny, infill_num)
+function chisquared_xinfill_ctot(star_stats2, icov, mean_real, Np, cenx, ceny, infill_num)
     dv = (Np-1)÷2;
     #print(dv)
     #print(cenx)
     #print(ceny)
     xinfill_Np = vec(star_stats2[(cenx-dv):(cenx+dv),(ceny-dv):(ceny+dv),infill_num]); #infilled data, one specific draw
+    xinfill_Np_minus_mean = xinfill_Np-mean_real
     #print(size(xinfill_Np))
-    chi_squared = xinfill_Np'*(icov\xinfill_Np)/Np^2;
+    chi_squared = xinfill_Np_minus_mean'*(icov\xinfill_Np_minus_mean)/Np^2;
     return chi_squared
 end
 
-function chisquared_xinfill_cinfill(star_stats2, kstar, ipredcov, cenx, ceny, Np, infill_num)
+function chisquared_xinfill_cinfill(star_stats2, kstar, ipredcov, mean_real, cenx, ceny, Np, infill_num)
     dv = (Np-1)÷2;
     infill_pix = count(kstar);
-    xinfill = vec(star_stats2[(cenx-dv):(cenx+dv),(ceny-dv):(ceny+dv),infill_num][kstar]); 
+    xinfill_minus_mean = vec(star_stats2[(cenx-dv):(cenx+dv),(ceny-dv):(ceny+dv),infill_num][kstar])-mean_real[kstar]; 
     chi_squared = xinfill'*(ipredcov\xinfill)/infill_pix;
     return chi_squared
 end
 
-function chisquared_xreal_cinfill(img, kstar, ipredcov, cenx, ceny, Np)
+function chisquared_xreal_cinfill(img, kstar, ipredcov, mean_infill, cenx, ceny, Np)
     dv = (Np-1)÷2;
     infill_pix = count(kstar);
-    xi_sub =vec(img[(cenx-dv):(cenx+dv),(ceny-dv):(ceny+dv)][kstar]);
+    xi_sub_minus_mean =vec(img[(cenx-dv):(cenx+dv),(ceny-dv):(ceny+dv)][kstar])-vec(mean_infill[kstar]);
     #print(size(xi_sub))
-    chi_squared = xi_sub'*(ipredcov\xi_sub)/infill_pix
+    chi_squared = xi_sub_minus_mean'*(ipredcov\xi_sub_minus_mean)/infill_pix
     return chi_squared
 end

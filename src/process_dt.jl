@@ -558,7 +558,7 @@ function proc_discrete_revised_dt(x_locs,y_locs,raw_image,mask_image;Np=33,widx=
         flush(stdout)
     end
     if ndraw>0
-        return predcovar, cov, kstar, mod_im[1].-out_mean[1:sx0, 1:sy0], mod_im[1].-out_draw[1:sx0, 1:sy0, :]
+        return predcovar, cov, kstar, μ, stat_out[1], mod_im[1].-out_mean[1:sx0, 1:sy0], mod_im[1].-out_draw[1:sx0, 1:sy0, :]
     else
         return cov, mod_im[1].-out_mean[1:sx0, 1:sy0]
     end
@@ -567,7 +567,7 @@ end
 
 function chi_squared_stats(x_locs,y_locs,raw_image,mask_image,img;Np=33, widx=129,widy=widx,tilex=1,ftype=64, tiley=tilex,seed=2021,rlim=625,ndraw=1, infill_num=1)
 
-    predcov, cov, kstar, star_stats1, star_stats2 = proc_discrete_revised_dt(x_locs,y_locs,raw_image,mask_image,Np=Np, widx=widx,widy=widy,ftype=ftype, tilex=tilex,tiley=tiley,seed=seed,rlim=rlim,ndraw=ndraw);
+    predcov, cov, kstar, mean_real, mean_infill, star_stats1, star_stats2 = proc_discrete_revised_dt(x_locs,y_locs,raw_image,mask_image,Np=Np, widx=widx,widy=widy,ftype=ftype, tilex=tilex,tiley=tiley,seed=seed,rlim=rlim,ndraw=ndraw);
     icov = cholesky(cov);
     ipredcov = cholesky(predcov);
     #print(size(icov))
@@ -577,11 +577,11 @@ function chi_squared_stats(x_locs,y_locs,raw_image,mask_image,img;Np=33, widx=12
     #print(cenx)
     #print(ceny)
     
-    xreal_ctot = chisquared_xreal_ctot(img, icov, Np, cenx, ceny);
+    xreal_ctot = chisquared_xreal_ctot(img, icov, mean_infill, Np, cenx, ceny);
     #print(x_real_ctot)
-    xinfill_ctot = chisquared_xinfill_ctot(star_stats2, icov, Np, cenx, ceny, infill_num);
-    xinfill_cinfill = chisquared_xinfill_cinfill(star_stats2, kstar, ipredcov, cenx, ceny, Np, infill_num);
-    xreal_cinfill = chisquared_xreal_cinfill(img, kstar, ipredcov, cenx, ceny, Np);
+    xinfill_ctot = chisquared_xinfill_ctot(star_stats2, icov, mean_real, Np, cenx, ceny, infill_num);
+    xinfill_cinfill = chisquared_xinfill_cinfill(star_stats2, kstar, ipredcov, mean_real, cenx, ceny, Np, infill_num);
+    xreal_cinfill = chisquared_xreal_cinfill(img, kstar, ipredcov, mean_infill, cenx, ceny, Np);
     
 
     return xreal_ctot, xinfill_ctot, xinfill_cinfill, xreal_cinfill
