@@ -658,7 +658,7 @@ function check_masks(x_locs,y_locs,raw_image,mask_image,img;Np=33, widx=129,widy
         append!(k_list, k)
         append!(kstar_list, kstar)
     
-    
+    end
     
     return r_list, k_list, kstar_list
     
