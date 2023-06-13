@@ -128,9 +128,7 @@ end
 
 function condCovEst_wdiag_dt(cov_loc,μ,km,data_in;Np=33,export_mean=false,n_draw=0,seed=2022)
     k = .!km
-    print(size(k))
     kstar = km
-    print(size(kstar))
     cov_kk = Symmetric(cov_loc[k,k])
     cov_kkstar = cov_loc[k,kstar];
     cov_kstarkstar = cov_loc[kstar,kstar];
@@ -164,7 +162,9 @@ end
 
 function condCovEst_wdiag_revised_dt(cov_loc,μ,km,data_in;Np=33,export_mean=false,n_draw=0,seed=2022)
     k = .!km
+    print(size(k))
     kstar = km
+    print(size(kstar))
     cov_kk = Symmetric(cov_loc[k,k])
     cov_kkstar = cov_loc[k,kstar];
     cov_kstarkstar = cov_loc[kstar,kstar];
