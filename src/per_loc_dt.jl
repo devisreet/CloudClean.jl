@@ -93,7 +93,9 @@ Using a local covariance matrix estimate `cov_loc` and a set of known ("good") p
 """
 function condCovEst_wdiag(cov_loc,μ,km,data_in;Np=33,export_mean=false,n_draw=0,seed=2022)
     k = .!km
+    print(size(k))
     kstar = km
+    print(size(kstar))
     cov_kk = Symmetric(cov_loc[k,k])
     cov_kkstar = cov_loc[k,kstar];
     cov_kstarkstar = cov_loc[kstar,kstar];
@@ -134,7 +136,7 @@ function condCovEst_wdiag_dt(cov_loc,μ,km,data_in;Np=33,export_mean=false,n_dra
     cov_kstarkstar = cov_loc[kstar,kstar];
     icov_kkC = cholesky(cov_kk)
     icovkkCcovkkstar = icov_kkC\cov_kkstar
-    predcovar = Symmetric(cov_kstarkstar - (cov_kkstar'*icovkkCcovkkstar))
+    predcovar = Symmetric(cov_kstarkstar - (cov_kkstar'*icovkkCcovkkstar)) #kstar by kstar
     ipcovC = cholesky(predcovar)
 
     @views uncond_input = data_in[:]
