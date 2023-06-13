@@ -181,12 +181,15 @@ function condCovEst_wdiag_revised_dt(cov_loc,μ,km,data_in;Np=33,export_mean=fal
 
     kstarpredn = (cond_input[k]'*icovkkCcovkkstar)'
     kstarpred = kstarpredn .+ μ[kstar]
+    
+    print(size(μ))
 
     out = []
     if export_mean
         mean_out = copy(data_in)
         mean_out[kstar] .= kstarpred
         push!(out,mean_out)
+        print(size(mean_out))
     end
     if n_draw != 0
         sqrt_cov = ipcovC.U
