@@ -291,7 +291,7 @@ function chisquared_xinfill_cinfill(star_stats2, kstar, ipredcov, mean_real, cen
     dv = (Np-1)÷2;
     infill_pix = count(kstar);
     xinfill_minus_mean = vec(star_stats2[(cenx-dv):(cenx+dv),(ceny-dv):(ceny+dv),infill_num][kstar])-mean_real[kstar]; 
-    chi_squared = xinfill'*(ipredcov\xinfill)/infill_pix;
+    chi_squared = xinfill_minus_mean'*(ipredcov\xinfill_minus_mean)/infill_pix;
     return chi_squared
 end
 
