@@ -8,6 +8,7 @@ export proc_discrete_dt
 export proc_discrete_revised_dt
 export chi_squared_stats
 export varyr_chi_squared_stats
+export check_masks
 """
     proc_continuous(raw_image, mask_image; Np=33, widx=129, widy=widx, tilex=1, tiley=tilex, seed=2021, ftype::Int=32, ndraw=0) -> out_mean, out_draw
 
@@ -628,7 +629,7 @@ end
 
 #check out our masks 
 
-function check_masks(x_locs,y_locs,raw_image,mask_image,img;Np=33, widx=129,widy=widx,tilex=1,ftype=64, tiley=tilex,seed=2021,rlim=625,ndraw=1)
+function check_masks(x_locs,y_locs,raw_image;Np=33, widx=129,widy=widx,tilex=1,ftype=64, tiley=tilex,seed=2021,rlim=625,ndraw=1)
     cenx = x_locs[1]
     ceny = y_locs[1]
     dv = (Np-1)÷2
