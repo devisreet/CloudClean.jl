@@ -594,7 +594,8 @@ function varyr_chi_squared_stats(x_locs,y_locs,raw_image,img;Np=33, widx=129,wid
     ceny = y_locs[1]
     dv = (Np-1)÷2
     
-    loops = isqrt(Np)
+    #loops = isqrt(Np^2÷3)
+    loops = 2
     
     #initialize
     chi_squared_xreal_ctot = Vector{Float64}()
@@ -607,9 +608,10 @@ function varyr_chi_squared_stats(x_locs,y_locs,raw_image,img;Np=33, widx=129,wid
     for i in 0:loops
         r=i 
         bimage = zeros(Bool,size(raw_image));
-        circmask = .!kstar_circle_mask(Np,rlim=r);
+        circmask = .!kstar_circle_mask(Np,rlim=r^2);
         bimage[(cenx-dv):(cenx+dv),(ceny-dv):(ceny+dv)].=circmask;
         raw_image[bimage].=0;
+        print(count(bimage))
     
         chi_squared_vals = chi_squared_stats(x_locs,y_locs,raw_image,bimage,img,Np=Np,widx=widx,widy=widy,tilex=tilex,ftype=ftype,tiley=tiley,seed=seed,rlim=rlim,ndraw=ndraw, infill_num=infill_num)
         
