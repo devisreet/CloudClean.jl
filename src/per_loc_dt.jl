@@ -292,7 +292,8 @@ function chisquared_xinfill_cinfill(star_stats2, kstar, ipredcov, cenx, ceny, Np
 end
 
 function chisquared_xreal_cinfill(img, kstar, ipredcov, cenx, ceny, Np)
-    infill_pix = count(kstar)
+    dv = (Np-1)÷2;
+    infill_pix = count(kstar);
     xi_sub =vec(img[(cenx-dv):(cenx+dv),(ceny-dv):(ceny+dv)][kstar]);
     #print(size(xi_sub))
     chi_squared = xi_sub'*(ipredcov\xi_sub)/infill_pix

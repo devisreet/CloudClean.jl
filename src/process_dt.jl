@@ -570,7 +570,7 @@ function chi_squared_stats(x_locs,y_locs,raw_image,mask_image,img;Np=33, widx=12
     predcov, cov, kstar, star_stats1, star_stats2 = proc_discrete_revised_dt(x_locs,y_locs,raw_image,mask_image,Np=Np, widx=widx,widy=widy,ftype=ftype, tilex=tilex,tiley=tiley,seed=seed,rlim=rlim,ndraw=ndraw);
     icov = cholesky(cov);
     ipredcov = cholesky(predcov);
-    print(size(icov))
+    #print(size(icov))
     #print(size(ipredcov))
     cenx = x_locs[1];
     ceny = y_locs[1];
@@ -603,15 +603,12 @@ function varyr_chi_squared_stats(x_locs,y_locs,raw_image,img;Np=33, widx=129,wid
     chi_squared_xinfill_cinfill= Vector{Float64}()
     chi_squared_xreal_cinfill = Vector{Float64}()
     
-    
-    # for i in range(0, isqrt(Np)): 
     for i in 0:loops
         r=i 
         bimage = zeros(Bool,size(raw_image));
         circmask = .!kstar_circle_mask(Np,rlim=r^2);
         bimage[(cenx-dv):(cenx+dv),(ceny-dv):(ceny+dv)].=circmask;
         raw_image[bimage].=0;
-        count(bimage)
     
         chi_squared_vals = chi_squared_stats(x_locs,y_locs,raw_image,bimage,img,Np=Np,widx=widx,widy=widy,tilex=tilex,ftype=ftype,tiley=tiley,seed=seed,rlim=rlim,ndraw=ndraw, infill_num=infill_num)
         
@@ -620,7 +617,7 @@ function varyr_chi_squared_stats(x_locs,y_locs,raw_image,img;Np=33, widx=129,wid
         append!(chi_squared_xinfill_ctot, chi_squared_vals[2])
         append!(chi_squared_xinfill_cinfill, chi_squared_vals[3])
         append!(chi_squared_xreal_cinfill, chi_squared_vals[4])
-        #append chi_squared_vals
+        
     end
     return chi_squared_xreal_ctot,chi_squared_xinfill_ctot, chi_squared_xinfill_cinfill, chi_squared_xreal_cinfill
     
