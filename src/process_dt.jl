@@ -624,3 +624,42 @@ function varyr_chi_squared_stats(x_locs,y_locs,raw_image,img;Np=33, widx=129,wid
     return chi_squared_xreal_ctot,chi_squared_xinfill_ctot, chi_squared_xinfill_cinfill, chi_squared_xreal_cinfill
     
 end
+
+
+#check out our masks 
+
+function check_masks(x_locs,y_locs,raw_image,mask_image,img;Np=33, widx=129,widy=widx,tilex=1,ftype=64, tiley=tilex,seed=2021,rlim=625,ndraw=1)
+    cenx = x_locs[1]
+    ceny = y_locs[1]
+    dv = (Np-1)÷2
+    
+    #loops = isqrt(dv)
+    loops = isqrt(Np^2÷3)
+    
+    r_list= Vector{Float64}()
+    kstar_list= Vector{Bool}()
+    k_list = Vector{Bool}()
+
+    
+    for i in 0:loops
+        r=i 
+        append!(r_list, r)
+        
+        bimage = zeros(Bool,size(raw_image));
+        circmask = .!kstar_circle_mask(Np,rlim=r^2);
+        bimage[(cenx-dv):(cenx+dv),(ceny-dv):(ceny+dv)].=circmask;
+        raw_image[bimage].=0;
+        
+        predcov, cov, kstar, mean_real, mean_infill, star_stats1, star_stats2 = proc_discrete_revised_dt(x_locs,y_locs,raw_image,bimage,Np=Np,widx=widx,widy=widy,ftype=ftype, tilex=tilex,tiley=tiley,seed=seed,rlim=rlim,ndraw=ndraw);
+
+        k = .!kstar 
+        
+        
+        append!(k_list, k)
+        append!(kstar_list, kstar)
+    
+    
+    
+    return r_list, k_list, kstar_list
+    
+end 
