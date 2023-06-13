@@ -171,6 +171,7 @@ function condCovEst_wdiag_revised_dt(cov_loc,μ,km,data_in;Np=33,export_mean=fal
     icov_kkC = cholesky(cov_kk)
     icovkkCcovkkstar = icov_kkC\cov_kkstar
     predcovar = Symmetric(cov_kstarkstar - (cov_kkstar'*icovkkCcovkkstar))
+    print(size(predcovar))
     ipcovC = cholesky(predcovar)
 
     @views uncond_input = data_in[:]
