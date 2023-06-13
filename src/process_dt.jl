@@ -526,6 +526,7 @@ function proc_discrete_revised_dt(x_locs,y_locs,raw_image,mask_image;Np=33,widx=
             offy = pady-Δy-(jy-1)*stepy
             for i in star_ind
                 build_cov!(cov,μ,cx[i]+offx,cy[i]+offy,bimage,bism,Np,widx,widy)
+                print(count(bimage))
                 cov_stamp = cx[i]-radNp:cx[i]+radNp,cy[i]-radNp:cy[i]+radNp
                     
                 kmasked2d = in_bmaskd[cov_stamp[1],cov_stamp[2]]
@@ -534,7 +535,7 @@ function proc_discrete_revised_dt(x_locs,y_locs,raw_image,mask_image;Np=33,widx=
 
                 # try
                     global predcovar, stat_out = condCovEst_wdiag_revised_dt(cov,μ,kstar,data_in,Np=Np,export_mean=true,n_draw=ndraw,seed=seed);
-                    
+                    print(size(kstar))
                     data_in[kstar].=stat_out[1][kstar]
                     in_image_raw[cov_stamp[1],cov_stamp[2]].=data_in
                     
