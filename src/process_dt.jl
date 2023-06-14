@@ -638,8 +638,8 @@ function check_masks(x_locs,y_locs,raw_image;Np=33, widx=129,widy=widx,tilex=1,f
     loops = isqrt(Np^2÷3)
     
     r_list= Vector{Float64}()
-    kstar_list= Vector{Bool}()
-    k_list = Vector{Bool}()
+    kstar_list= []
+    k_list = []
 
     
     for i in 0:loops
@@ -656,8 +656,8 @@ function check_masks(x_locs,y_locs,raw_image;Np=33, widx=129,widy=widx,tilex=1,f
         k = .!kstar 
         
         
-        append!(k_list, k)
-        append!(kstar_list, kstar)
+        push!(k_list, k)
+        push!(kstar_list, kstar)
     
     end
     
