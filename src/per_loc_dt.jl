@@ -275,10 +275,10 @@ function chisquared_xreal_ctot(img, icov, mean_real, Np, cenx, ceny)
     return chi_squared
 end
 
-function chisquared_xinfill_ctot(star_stats2, icov, mean_infill, Np, cenx, ceny, infill_num)
+function chisquared_xinfill_ctot(star_stats2, icov, mean_real, Np, cenx, ceny, infill_num)
     dv = (Np-1)÷2;
     xinfill_Np = vec(star_stats2[(cenx-dv):(cenx+dv),(ceny-dv):(ceny+dv),infill_num]); #infilled data, one specific draw
-    xinfill_Np_minus_mean = xinfill_Np-vec(mean_infill)
+    xinfill_Np_minus_mean = xinfill_Np-vec(mean_real)
     chi_squared = xinfill_Np_minus_mean'*(icov\xinfill_Np_minus_mean)/Np^2;
     return chi_squared
 end
@@ -292,11 +292,11 @@ function chisquared_xinfill_cinfill(star_stats2, kstar, ipredcov, mean_infill, c
     return chi_squared
 end
 
-function chisquared_xreal_cinfill(img, kstar, ipredcov, mean_real, cenx, ceny, Np)
+function chisquared_xreal_cinfill(img, kstar, ipredcov, mean_infill, cenx, ceny, Np)
     dv = (Np-1)÷2;
     infill_pix = count(kstar);
     xi_sub =vec(img[(cenx-dv):(cenx+dv),(ceny-dv):(ceny+dv)][kstar]);
-    xi_sub_minus_mean =xi_sub-vec(mean_real[kstar]);
+    xi_sub_minus_mean =xi_sub-vec(mean_infill[kstar]);
     #print(size(xi_sub))
     chi_squared = xi_sub_minus_mean'*(ipredcov\xi_sub_minus_mean)/infill_pix
     return chi_squared
