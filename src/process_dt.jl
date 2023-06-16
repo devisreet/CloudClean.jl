@@ -508,7 +508,7 @@ function proc_discrete_revised_dt(x_locs,y_locs,raw_image,mask_image;Np=33,widx=
     μ = zeros(T,Np*Np)
 
     # compute a radial mask for reduced num cond pixels
-    circmask = kstar_circle_mask(Np,rlim=rlim)
+    #circmask = kstar_circle_mask(Np,rlim=rlim)
 
     # some important global sizes for the loop
     cntStar0 = 0
