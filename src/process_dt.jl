@@ -606,10 +606,10 @@ function varyr_chi_squared_stats(x_locs,y_locs,raw_image,img;Np=33, widx=129,wid
     loops = isqrt(Np^2÷3)
     
     #initialize
-    chi_squared_xreal_ctot = Vector{Float64}()
-    chi_squared_xinfill_ctot = Vector{Float64}()
-    chi_squared_xinfill_cinfill= Vector{Float64}()
-    chi_squared_xreal_cinfill = Vector{Float64}()
+    chi_squared_xreal_ctot = []
+    chi_squared_xinfill_ctot = []
+    chi_squared_xinfill_cinfill= []
+    chi_squared_xreal_cinfill = []
     
     for i in 0:loops
         r=i 
@@ -621,10 +621,10 @@ function varyr_chi_squared_stats(x_locs,y_locs,raw_image,img;Np=33, widx=129,wid
         chi_squared_vals = chi_squared_stats(x_locs,y_locs,raw_image,bimage,img,Np=Np,widx=widx,widy=widy,tilex=tilex,ftype=ftype,tiley=tiley,seed=seed,rlim=rlim,ndraw=ndraw)
         
         
-        append!(chi_squared_xreal_ctot, chi_squared_vals[1])
-        append!(chi_squared_xinfill_ctot, chi_squared_vals[2])
-        append!(chi_squared_xinfill_cinfill, chi_squared_vals[3])
-        append!(chi_squared_xreal_cinfill, chi_squared_vals[4])
+        push!(chi_squared_xreal_ctot, chi_squared_vals[1])
+        push!(chi_squared_xinfill_ctot, chi_squared_vals[2])
+        push!(chi_squared_xinfill_cinfill, chi_squared_vals[3])
+        push!(chi_squared_xreal_cinfill, chi_squared_vals[4])
         
     end
     return chi_squared_xreal_ctot,chi_squared_xinfill_ctot, chi_squared_xinfill_cinfill, chi_squared_xreal_cinfill
