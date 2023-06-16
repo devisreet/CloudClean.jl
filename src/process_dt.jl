@@ -603,7 +603,7 @@ function varyr_chi_squared_stats(x_locs,y_locs,raw_image,img;Np=33, widx=129,wid
     dv = (Np-1)÷2
     
     #loops = isqrt(dv)
-    loops = isqrt(Np^2÷3)
+    loops = dv
     
     #initialize
     chi_squared_xreal_ctot = []
