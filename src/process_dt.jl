@@ -297,8 +297,8 @@ function proc_discrete(x_locs,y_locs,raw_image,mask_image;Np=33,widx=129,widy=wi
                 cov_stamp = cx[i]-radNp:cx[i]+radNp,cy[i]-radNp:cy[i]+radNp
                     
                 kmasked2d = in_bmaskd[cov_stamp[1],cov_stamp[2]]
-                #kstar, kcond = gen_pix_mask_circ(kmasked2d,circmask;Np=Np)
-                kstar, kcond = gen_pix_mask_trivial(kmasked2d; Np=Np) #simpler version
+                kstar, kcond = gen_pix_mask_circ(kmasked2d,circmask;Np=Np)
+                #kstar, kcond = gen_pix_mask_trivial(kmasked2d; Np=Np) #simpler version
                 
                 data_in = in_image_raw[cov_stamp[1],cov_stamp[2]]
 
@@ -428,7 +428,8 @@ function proc_discrete_dt(x_locs,y_locs,raw_image,mask_image;Np=33,widx=129,widy
                 cov_stamp = cx[i]-radNp:cx[i]+radNp,cy[i]-radNp:cy[i]+radNp
                     
                 kmasked2d = in_bmaskd[cov_stamp[1],cov_stamp[2]]
-                kstar, kcond = gen_pix_mask_circ(kmasked2d,circmask;Np=Np)
+                #kstar, kcond = gen_pix_mask_circ(kmasked2d,circmask;Np=Np)
+                kstar, kcond = gen_pix_mask_trivial(kmasked2d; Np=Np) #simpler version
                 data_in = in_image_raw[cov_stamp[1],cov_stamp[2]]
 
                 # try
@@ -532,7 +533,8 @@ function proc_discrete_revised_dt(x_locs,y_locs,raw_image,mask_image;Np=33,widx=
                 cov_stamp = cx[i]-radNp:cx[i]+radNp,cy[i]-radNp:cy[i]+radNp
                     
                 kmasked2d = in_bmaskd[cov_stamp[1],cov_stamp[2]]
-                global kstar, kcond = gen_pix_mask_circ(kmasked2d,circmask;Np=Np)
+                #kstar, kcond = gen_pix_mask_circ(kmasked2d,circmask;Np=Np)
+                global kstar, kcond = gen_pix_mask_trivial(kmasked2d; Np=Np) #simpler version
                 data_in = in_image_raw[cov_stamp[1],cov_stamp[2]]
 
                 # try
@@ -581,13 +583,23 @@ function chi_squared_stats(x_locs,y_locs,raw_image,mask_image,img;Np=33, widx=12
     #print(ceny)
     
     xreal_ctot = chisquared_xreal_ctot(img, icov, mean_real, Np, cenx, ceny);
-    xinfill_ctot = chisquared_xinfill_ctot(star_stats2, icov, mean_real, Np, cenx, ceny, infill_num);
     
-    xinfill_cinfill = chisquared_xinfill_cinfill(star_stats2, kstar, ipredcov, mean_infill, cenx, ceny, Np, infill_num);
-    xreal_cinfill = chisquared_xreal_cinfill(img, kstar, ipredcov, mean_infill, cenx, ceny, Np);
+    xinfill_ctot_manyinfills =Vector{Float64}()
+    xinfill_cinfill_manyinfills = Vector{Float64}()
+    xreal_cinfill_manyinfills = Vector{Float64}()
     
+    for i in 1:infill_num
+        xinfill_ctot = chisquared_xinfill_ctot(star_stats2, icov, mean_real, Np, cenx, ceny, infill_num);
+        append!(xinfill_ctot_manyinfills, xinfill_ctot);
+            
+        xinfill_cinfill = chisquared_xinfill_cinfill(star_stats2, kstar, ipredcov, mean_infill, cenx, ceny, Np, infill_num);
+        append!(xinfill_cinfill_manyinfills,xinfill_cinfill);
+        
+        xreal_cinfill = chisquared_xreal_cinfill(img, kstar, ipredcov, mean_infill, cenx, ceny, Np);
+        append!(xreal_cinfill_manyinfills,xreal_cinfill);
+    end
 
-    return xreal_ctot, xinfill_ctot, xinfill_cinfill, xreal_cinfill
+    return xreal_ctot, xinfill_ctot_manyinfills, xinfill_cinfill_manyinfills, xreal_cinfill_manyinfills
     
 end 
     
