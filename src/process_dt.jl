@@ -641,7 +641,7 @@ function check_masks(x_locs,y_locs,raw_image;Np=33, widx=129,widy=widx,tilex=1,f
     
     #loops = isqrt(dv)
     loops = dv
-    
+    print(loops)
     r_list= Vector{Float64}()
     kstar_list= []
     k_list = []
