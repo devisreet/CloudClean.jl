@@ -570,40 +570,33 @@ function proc_discrete_revised_dt(x_locs,y_locs,raw_image,mask_image;Np=33,widx=
 end
 
 
-function chi_squared_stats(x_locs,y_locs,raw_image,mask_image,img;Np=33, widx=129,widy=widx,tilex=1,ftype=64, tiley=tilex,seed=2021,rlim=625,ndraw=1, infill_num=1)
+function chi_squared_stats(x_locs,y_locs,raw_image,mask_image,img;Np=33, widx=129,widy=widx,tilex=1,ftype=64, tiley=tilex,seed=2021,rlim=625,ndraw=1)
 
     predcov, cov, kstar, mean_real, mean_infill, star_stats1, star_stats2 = proc_discrete_revised_dt(x_locs,y_locs,raw_image,mask_image,Np=Np, widx=widx,widy=widy,ftype=ftype, tilex=tilex,tiley=tiley,seed=seed,rlim=rlim,ndraw=ndraw);
     icov = cholesky(cov);
     ipredcov = cholesky(predcov);
-    #print(size(icov))
-    #print(size(ipredcov))
     cenx = x_locs[1];
     ceny = y_locs[1];
-    #print(cenx)
-    #print(ceny)
     
     xreal_ctot = chisquared_xreal_ctot(img, icov, mean_real, Np, cenx, ceny);
+    xreal_cinfill = chisquared_xreal_cinfill(img, kstar, ipredcov, mean_infill, cenx, ceny, Np);
     
     xinfill_ctot_manyinfills =Vector{Float64}()
     xinfill_cinfill_manyinfills = Vector{Float64}()
-    xreal_cinfill_manyinfills = Vector{Float64}()
     
-    for i in 1:infill_num
-        xinfill_ctot = chisquared_xinfill_ctot(star_stats2, icov, mean_real, Np, cenx, ceny, infill_num);
+    for i in 1:ndraw
+        xinfill_ctot = chisquared_xinfill_ctot(star_stats2, icov, mean_real, Np, cenx, ceny, i);
         append!(xinfill_ctot_manyinfills, xinfill_ctot);
             
-        xinfill_cinfill = chisquared_xinfill_cinfill(star_stats2, kstar, ipredcov, mean_infill, cenx, ceny, Np, infill_num);
+        xinfill_cinfill = chisquared_xinfill_cinfill(star_stats2, kstar, ipredcov, mean_infill, cenx, ceny, Np, i);
         append!(xinfill_cinfill_manyinfills,xinfill_cinfill);
-        
-        xreal_cinfill = chisquared_xreal_cinfill(img, kstar, ipredcov, mean_infill, cenx, ceny, Np);
-        append!(xreal_cinfill_manyinfills,xreal_cinfill);
     end
 
-    return xreal_ctot, xinfill_ctot_manyinfills, xinfill_cinfill_manyinfills, xreal_cinfill_manyinfills
+    return xreal_ctot, xinfill_ctot_manyinfills, xinfill_cinfill_manyinfills, xreal_cinfill
     
 end 
     
-function varyr_chi_squared_stats(x_locs,y_locs,raw_image,img;Np=33, widx=129,widy=widx,tilex=1,ftype=64, tiley=tilex,seed=2021,rlim=625,ndraw=1, infill_num=1)
+function varyr_chi_squared_stats(x_locs,y_locs,raw_image,img;Np=33, widx=129,widy=widx,tilex=1,ftype=64, tiley=tilex,seed=2021,rlim=625,ndraw=1)
     
     cenx = x_locs[1]
     ceny = y_locs[1]
@@ -625,7 +618,7 @@ function varyr_chi_squared_stats(x_locs,y_locs,raw_image,img;Np=33, widx=129,wid
         bimage[(cenx-dv):(cenx+dv),(ceny-dv):(ceny+dv)].=circmask;
         raw_image[bimage].=0;
     
-        chi_squared_vals = chi_squared_stats(x_locs,y_locs,raw_image,bimage,img,Np=Np,widx=widx,widy=widy,tilex=tilex,ftype=ftype,tiley=tiley,seed=seed,rlim=rlim,ndraw=ndraw, infill_num=infill_num)
+        chi_squared_vals = chi_squared_stats(x_locs,y_locs,raw_image,bimage,img,Np=Np,widx=widx,widy=widy,tilex=tilex,ftype=ftype,tiley=tiley,seed=seed,rlim=rlim,ndraw=ndraw)
         
         
         append!(chi_squared_xreal_ctot, chi_squared_vals[1])
