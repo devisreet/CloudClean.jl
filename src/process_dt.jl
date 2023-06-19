@@ -272,7 +272,7 @@ function proc_discrete(x_locs,y_locs,raw_image,mask_image;Np=33,widx=129,widy=wi
     μ = zeros(T,Np*Np)
 
     # compute a radial mask for reduced num cond pixels
-    circmask = kstar_circle_mask(Np,rlim=rlim)
+    #circmask = kstar_circle_mask(Np,rlim=rlim)
 
     # some important global sizes for the loop
     cntStar0 = 0
@@ -297,8 +297,8 @@ function proc_discrete(x_locs,y_locs,raw_image,mask_image;Np=33,widx=129,widy=wi
                 cov_stamp = cx[i]-radNp:cx[i]+radNp,cy[i]-radNp:cy[i]+radNp
                     
                 kmasked2d = in_bmaskd[cov_stamp[1],cov_stamp[2]]
-                kstar, kcond = gen_pix_mask_circ(kmasked2d,circmask;Np=Np)
-                #kstar, kcond = gen_pix_mask_trivial(kmasked2d; Np=Np) #simpler version
+                #kstar, kcond = gen_pix_mask_circ(kmasked2d,circmask;Np=Np)
+                kstar, kcond = gen_pix_mask_trivial(kmasked2d; Np=Np) #simpler version
                 
                 data_in = in_image_raw[cov_stamp[1],cov_stamp[2]]
 
