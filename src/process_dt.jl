@@ -653,7 +653,7 @@ function check_masks(x_locs,y_locs,raw_image;Np=33, widx=129,widy=widx,tilex=1,f
     
     #mask bad pixels 
     if badpixels == true
-        raw_image[badpixmask].=0;
+        raw_image[badpixmask[1],badpixmask[2]].=0;
     end
     
     
