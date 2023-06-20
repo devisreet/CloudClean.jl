@@ -570,7 +570,7 @@ function proc_discrete_revised_dt(x_locs,y_locs,raw_image,mask_image;Np=33,widx=
 end
 
 
-function chi_squared_stats(x_locs,y_locs,raw_image,mask_image,img;Np=33, widx=129,widy=widx,tilex=1,ftype=64, tiley=tilex,seed=2021,rlim=625,ndraw=1)
+function chi_squared_stats(x_locs,y_locs,raw_image,mask_image,img;Np=33, widx=129,widy=widx,tilex=1,ftype=64, tiley=tilex,seed=2021,rlim=625,ndraw=1) #see more_correct_look for why these are bad pix
 
     predcov, cov, kstar, mean_real, mean_infill, star_stats1, star_stats2 = proc_discrete_revised_dt(x_locs,y_locs,raw_image,mask_image,Np=Np, widx=widx,widy=widy,ftype=ftype, tilex=tilex,tiley=tiley,seed=seed,rlim=rlim,ndraw=ndraw);
     icov = cholesky(cov);
@@ -597,7 +597,7 @@ function chi_squared_stats(x_locs,y_locs,raw_image,mask_image,img;Np=33, widx=12
     
 end 
     
-function varyr_chi_squared_stats(x_locs,y_locs,raw_image,img;Np=33, widx=129,widy=widx,tilex=1,ftype=64, tiley=tilex,seed=2021,rlim=625,ndraw=1)
+function varyr_chi_squared_stats(x_locs,y_locs,raw_image,img;Np=33, widx=129,widy=widx,tilex=1,ftype=64, tiley=tilex,seed=2021,rlim=625,ndraw=1, badpixels=false, badpixmask=[262:263, 723:723]) #see more_correct_look for why these are bad pix
     
     cenx = x_locs[1]
     ceny = y_locs[1]
@@ -611,6 +611,11 @@ function varyr_chi_squared_stats(x_locs,y_locs,raw_image,img;Np=33, widx=129,wid
     chi_squared_xinfill_ctot = []
     chi_squared_xinfill_cinfill= []
     chi_squared_xreal_cinfill = []
+    
+    #mask bad pixels 
+    if badpixels == true
+        raw_image[badpixmask].=0;
+    end
     
     for i in 0:loops
         r=i 
@@ -635,7 +640,7 @@ end
 
 #check out our masks 
 
-function check_masks(x_locs,y_locs,raw_image;Np=33, widx=129,widy=widx,tilex=1,ftype=64, tiley=tilex,seed=2021,rlim=625,ndraw=1)
+function check_masks(x_locs,y_locs,raw_image;Np=33, widx=129,widy=widx,tilex=1,ftype=64, tiley=tilex,seed=2021,rlim=625,ndraw=1, badpixels=false, badpixmask=[262:263, 723:723]) #see more_correct_look for why these are bad pix
     cenx = x_locs[1]
     ceny = y_locs[1]
     dv = (Np-1)÷2
@@ -645,7 +650,12 @@ function check_masks(x_locs,y_locs,raw_image;Np=33, widx=129,widy=widx,tilex=1,f
     r_list= Vector{Float64}()
     kstar_list= []
     k_list = []
-
+    
+    #mask bad pixels 
+    if badpixels == true
+        raw_image[badpixmask].=0;
+    end
+    
     
     for i in 0:loops
         r=i 
