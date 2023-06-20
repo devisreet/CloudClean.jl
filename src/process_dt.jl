@@ -614,7 +614,7 @@ function varyr_chi_squared_stats(x_locs,y_locs,raw_image,img;Np=33, widx=129,wid
     
     #mask bad pixels 
     if badpixels == true
-        raw_image[badpixmask].=0;
+        raw_image[badpixmask[1],badpixmask[2]].=0;
     end
     
     for i in 0:loops
