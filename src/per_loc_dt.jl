@@ -298,6 +298,6 @@ function chisquared_xreal_cinfill(img, kstar, ipredcov, mean_infill, cenx, ceny,
     xi_sub =vec(img[(cenx-dv):(cenx+dv),(ceny-dv):(ceny+dv)][kstar]);
     xi_sub_minus_mean =xi_sub-vec(mean_infill[kstar]);
     #print(size(xi_sub))
-    chi_squared = xi_sub_minus_mean'*(ipredcov\xi_sub_minus_mean)/infill_pix
+    chi_squared = xi_sub_minus_mean'*(ipredcov\xi_sub_minus_mean)/infill_pix;
     return chi_squared
-end
+end  

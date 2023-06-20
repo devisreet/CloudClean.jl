@@ -579,8 +579,8 @@ function chi_squared_stats(x_locs,y_locs,raw_image,mask_image,img;Np=33, widx=12
     ceny = y_locs[1];
     
     xreal_ctot = chisquared_xreal_ctot(img, icov, mean_real, Np, cenx, ceny);
-    #xreal_cinfill = chisquared_xreal_cinfill(img, kstar, ipredcov, mean_infill, cenx, ceny, Np);
-    xreal_cinfill = chisquared_xreal_cinfill(img, kstar, ipredcov, mean_real, cenx, ceny, Np);
+    xreal_cinfill = chisquared_xreal_cinfill(img, kstar, ipredcov, mean_infill, cenx, ceny, Np);
+    
     
     xinfill_ctot_manyinfills =Vector{Float64}()
     xinfill_cinfill_manyinfills = Vector{Float64}()
@@ -589,8 +589,7 @@ function chi_squared_stats(x_locs,y_locs,raw_image,mask_image,img;Np=33, widx=12
         xinfill_ctot = chisquared_xinfill_ctot(star_stats2, icov, mean_real, Np, cenx, ceny, i);
         append!(xinfill_ctot_manyinfills, xinfill_ctot);
             
-        #xinfill_cinfill = chisquared_xinfill_cinfill(star_stats2, kstar, ipredcov, mean_infill, cenx, ceny, Np, i);
-        xinfill_cinfill = chisquared_xinfill_cinfill(star_stats2, kstar, ipredcov, mean_real, cenx, ceny, Np, i);
+        xinfill_cinfill = chisquared_xinfill_cinfill(star_stats2, kstar, ipredcov, mean_infill, cenx, ceny, Np, i);
         append!(xinfill_cinfill_manyinfills,xinfill_cinfill);
     end
 
