@@ -37,7 +37,7 @@ Process an image with a mask, replacing masked pixels with either a mean or draw
 julia> raw_image = rand(100, 100)
 julia> mask_image = rand(Bool, 100, 100)
 julia> result = proc_continuous(raw_image, mask_image, Np=33, widx=129, seed=2021)
-```
+``'
 """
 function proc_continuous(raw_image,mask_image;Np=33,widx=129,widy=widx,tilex=1,tiley=tilex,seed=2021,ftype::Int=32,ndraw=0)
     radNp = (Np-1)÷2
