@@ -1,12 +1,14 @@
 using LinearAlgebra
 
 export build_cov!
+export dt_build_cov!
 export condCovEst_wdiag
 export gen_pix_mask_trivial
 export gen_pix_mask_circ
 
 export condCovEst_wdiag_dt
 export condCovEst_wdiag_revised_dt
+export condCovEst_wdiag_svd
 
 export chisquared_xreal_ctot
 export chisquared_xinfill_ctot
@@ -101,6 +103,10 @@ function condCovEst_wdiag(cov_loc,μ,km,data_in;Np=33,export_mean=false,n_draw=0
     icovkkCcovkkstar = icov_kkC\cov_kkstar
     predcovar = Symmetric(cov_kstarkstar - (cov_kkstar'*icovkkCcovkkstar))
     ipcovC = cholesky(predcovar)
+
+    # test symmetry
+    # in_bet = cov_kstarkstar - (cov_kkstar'*icovkkCcovkkstar)
+   # print(in_bet' .- in_bet)
 
     @views uncond_input = data_in[:]
     @views cond_input = data_in[:].- μ
@@ -202,6 +208,96 @@ function condCovEst_wdiag_revised_dt(cov_loc,μ,km,data_in;Np=33,export_mean=fal
     return predcovar, out
 end
 
+
+function condCovEst_wdiag_svd(cov_loc,μ,km,data_in;Np=33,export_mean=false,n_draw=0,seed=2022, use_svd=false, low_rank=false)
+    k = .!km
+    kstar = km
+    cov_kk = Symmetric(cov_loc[k,k])
+    cov_kkstar = cov_loc[k,kstar];
+    cov_kstarkstar = cov_loc[kstar,kstar];
+
+    if use_svd
+        #u_covkk, s_covkk, v_covkk = svd(Matrix(cov_kk), full=true, alg=LinearAlgebra.QRIteration())
+        u_covkk, s_covkk, v_covkk = svd(cov_kk, full=true)
+        
+        if low_rank
+            cutoff = 0.1 
+            indxs = s_covkk .> cutoff 
+           # println([minimum(s_covkk), length(s_covkk), sum(indxs)])
+            icov_kkc = v_covkk[:, indxs]*diagm(1 ./ s_covkk[indxs])*u_covkk[:, indxs]'
+        else 
+            icov_kkc = v_covkk*diagm(1 ./ s_covkk)*u_covkk'
+        end
+        
+        icovkkCcovkkstar = icov_kkc*cov_kkstar
+        
+        predcovar = Symmetric(cov_kstarkstar - (cov_kkstar'*icovkkCcovkkstar))
+        #u_pcovC, s_pcovC, v_pcovC = svd(Matrix(predcovar), full=true, alg=LinearAlgebra.QRIteration())  #may need low rank here too
+        u_pcovC, s_pcovC, v_pcovC = svd(predcovar, full=true)
+        ipcovC = v_pcovC*diagm(1 ./ s_pcovC)*u_pcovC'
+       # println([minimum(s_pcovC)])
+        # print(eigmin(predcovar))
+    else
+        icov_kkC = cholesky(cov_kk)
+        icovkkCcovkkstar = icov_kkC\cov_kkstar
+        
+        predcovar = Symmetric(cov_kstarkstar - (cov_kkstar'*icovkkCcovkkstar))
+        ipcovC = cholesky(predcovar)
+    end
+
+    # println("part of predcovar")
+    # println(issymmetric(cov_kkstar'*icovkkCcovkkstar))
+    # println("predcovar before passing to symmetric")
+    # sub_mat = cov_kkstar'*icovkkCcovkkstar
+    
+    # println("part of predcovar")
+    # println(sum(sub_mat' .- sub_mat))
+
+    # println("predcovar")
+    # test = cov_kstarkstar - (cov_kkstar'*icovkkCcovkkstar) 
+    # println(sum(test' .- test))
+    
+    #  println(abs.(u_pcovC .- v_pcovC))
+    #  predcovar = Symmetric(cov_kstarkstar - (cov_kkstar'*icovkkCcovkkstar))
+   
+    # println(eigmin(predcovar))
+    # ipcovC = cholesky(predcovar)
+
+    @views uncond_input = data_in[:]
+    @views cond_input = data_in[:].- μ
+
+    kstarpredn = (cond_input[k]'*icovkkCcovkkstar)'
+    kstarpred = kstarpredn .+ μ[kstar]
+
+    out = []
+    if export_mean
+        mean_out = copy(data_in)
+        mean_out[kstar] .= kstarpred
+        push!(out,mean_out)
+    end
+    if n_draw != 0
+        if use_svd
+            sqrt_cov = u_pcovC*diagm(sqrt.(s_pcovC))*v_pcovC'
+            #noise = (sqrt_cov*randn(n_draw,size(sqrt_cov)[1])')' #flipping sqrt mult dir
+            
+            noise = randn(n_draw,size(sqrt_cov)[1])*sqrt_cov #first way
+        else
+            sqrt_cov = ipcovC.U
+            noise = randn(n_draw,size(sqrt_cov)[1])*sqrt_cov
+        end
+        
+        # sqrt_cov = ipcovC.U
+        #noise = randn(n_draw,size(sqrt_cov)[1])*sqrt_cov
+
+        draw_out = repeat(copy(data_in)[:],outer=[1 n_draw])
+        draw_out[kstar,:] .= repeat(kstarpred,outer=[1 n_draw]) .+ noise'
+        push!(out,draw_out)
+    end
+
+    return out
+end
+
+
 """
     build_cov!(cov::Array{T,2},μ::Array{T,1},cx::Int,cy::Int,bimage::Array{T,2},bism::Array{T,4},Np::Int,widx::Int,widy::Int) where T <:Union{Float32,Float64}
 
@@ -259,6 +355,44 @@ function build_cov!(cov::Array{T,2},μ::Array{T,1},cx::Int,cy::Int,bimage::Array
     return
 end
 
+
+function dt_build_cov!(cov::Array{T,2},μ::Array{T,1},cx::Int,cy::Int,bimage::Array{T,2},bism::Array{T,4},Np::Int,widx::Int,widy::Int) where T <:Union{Float32,Float64}
+    Δx = (widx-1)÷2
+    Δy = (widy-1)÷2
+    halfNp = (Np-1) ÷ 2
+    Δr, Δc = cx-(halfNp+1), cy-(halfNp+1)
+    # Δr, Δc = cx-(halfNp-1), cy-(halfNp-1)
+    for dc=0:Np-1       # column shift loop
+        pcr = 1:Np-dc
+        for dr=1-Np:Np-1# row loop, incl negatives
+            if (dr < 0) & (dc == 0)
+                continue
+            end
+            if dr >= 0
+                prr = 1:Np-dr
+            end
+            if (dr < 0) & (dc > 0)
+                prr = 1-dr:Np
+            end
+
+            for pc=pcr, pr=prr
+                i = ((pc   -1)*Np)+pr
+                j = ((pc+dc-1)*Np)+pr+dr
+                @inbounds μ1μ2 = bimage[pr+Δr,pc+Δc]*bimage[pr+dr+Δr,pc+dc+Δc]/((widx*widy)^2)
+                @inbounds t = bism[pr+Δr,pc+Δc,dr+Np,dc+1]/(widx*widy) - μ1μ2
+                @inbounds cov[i,j] = t
+                @inbounds cov[j,i] = t
+                if i == j
+                    @inbounds μ[i] =  sqrt(μ1μ2)  #line changed
+                end
+            end
+        end
+    end
+    cov .*= (widx*widy)/((widx*widy)-1)
+    return
+end
+
+
 "
 Compute Various Chi-Squared Values 
 chisquared_xreal_ctot --> 
@@ -267,17 +401,19 @@ chisquared_xinfill_cinfill -->
 chisquared_xreal_cinfill ---> xreal is x0, sub
 "
 
-function chisquared_xreal_ctot(img, icov, mean_real, Np, cenx, ceny)
+function chisquared_xreal_ctot(img, raw_img, icov, mean_real, Np, cenx, ceny)
     dv = (Np-1)÷2;
-    x0 =img[(cenx-dv):(cenx+dv),(ceny-dv):(ceny+dv)];
-    x0_minus_mean_flat =vec(x0)-vec(mean_real);
-    chi_squared = x0_minus_mean_flat'*(icov\x0_minus_mean_flat)/Np^2;
+    x0_centered = img.-median(raw_img)
+    
+    x0_centered_flat = vec(x0_centered[(cenx-dv):(cenx+dv),(ceny-dv):(ceny+dv)])+vec(mean_real)
+    
+    chi_squared = x0_centered_flat'*(icov\x0_centered_flat)/Np^2;
     return chi_squared
 end
 
 function chisquared_xinfill_ctot(star_stats2, icov, mean_real, Np, cenx, ceny, infill_num)
     dv = (Np-1)÷2;
-    xinfill_Np = vec(star_stats2[(cenx-dv):(cenx+dv),(ceny-dv):(ceny+dv),infill_num]); #infilled data, one specific draw
+    xinfill_Np = star_stats2[:, infill_num]
     xinfill_Np_minus_mean = xinfill_Np-vec(mean_real)
     chi_squared = xinfill_Np_minus_mean'*(icov\xinfill_Np_minus_mean)/Np^2;
     return chi_squared
@@ -286,18 +422,50 @@ end
 function chisquared_xinfill_cinfill(star_stats2, kstar, ipredcov, mean_infill, cenx, ceny, Np, infill_num)
     dv = (Np-1)÷2;
     infill_pix = count(kstar);
-    xinfill = vec(star_stats2[(cenx-dv):(cenx+dv),(ceny-dv):(ceny+dv),infill_num][kstar]); 
+    xinfill = vec(star_stats2[:, infill_num][kstar]); 
     xinfill_minus_mean = xinfill-vec(mean_infill[kstar]); 
     chi_squared = xinfill_minus_mean'*(ipredcov\xinfill_minus_mean)/infill_pix;
     return chi_squared
 end
 
-function chisquared_xreal_cinfill(img, kstar, ipredcov, mean_infill, cenx, ceny, Np)
+function chisquared_xreal_cinfill(img, raw_img, kstar, ipredcov, mean_infill, median_img, cenx, ceny, Np)
     dv = (Np-1)÷2;
     infill_pix = count(kstar);
-    xi_sub =vec(img[(cenx-dv):(cenx+dv),(ceny-dv):(ceny+dv)][kstar]);
-    xi_sub_minus_mean =xi_sub-vec(mean_infill[kstar]);
-    #print(size(xi_sub))
-    chi_squared = xi_sub_minus_mean'*(ipredcov\xi_sub_minus_mean)/infill_pix;
+    # print(size(img[(cenx-dv):(cenx+dv),(ceny-dv):(ceny+dv)]))
+    # print(median(raw_img))
+    # print(size(mean_infill))
+    
+    xi_sub_centered = img[(cenx-dv):(cenx+dv),(ceny-dv):(ceny+dv)].-(median(raw_img).-mean_infill)
+    xi_sub_centered_kstar = xi_sub_centered[kstar]
+#   xi_sub =vec(img[(cenx-dv):(cenx+dv),(ceny-dv):(ceny+dv)][kstar]);
+#   xi_sub_minus_mean =xi_sub-vec(mean_infill[kstar]);
+#   xi_sub_minus_mean =xi_sub-(vec(median_img[kstar])-vec(mean_infill[kstar]));
+ 
+    chi_squared = xi_sub_centered_kstar'*(ipredcov\xi_sub_centered_kstar)/infill_pix;
     return chi_squared
 end  
+
+function split_chisquared_contr_xinfill_ctot(star_stats2, kstar, icov, mean_real, Np, cenx, ceny, infill_num)
+    dv = (Np-1)÷2;
+    xinfill_Np = star_stats2[:, infill_num]
+    xinfill_Np_minus_mean = xinfill_Np-vec(mean_real)
+    
+    xinfill_kstar_nonzero = copy(xinfill_Np_minus_mean)
+    xinfill_kstar_nonzero[.!kstar].=0
+    xinfill_kstar_zero = copy(xinfill_Np_minus_mean)
+    xinfill_kstar_zero[kstar].=0
+    
+    # print(size(xinfill_kstar_nonzero))
+    # print(size(xinfill_kstar_zero))
+    xreal_contr = xinfill_kstar_zero'*(icov\xinfill_kstar_zero)/count(.!kstar)    #Np^2;
+    xinfill_contr= xinfill_kstar_nonzero'*(icov\xinfill_kstar_nonzero)/count(kstar)    #Np^2;
+    
+    cross_term_n = sqrt(count(.!kstar)*count(kstar))
+    xreal_xinfill_contr= xinfill_kstar_zero'*(icov\xinfill_kstar_nonzero)/cross_term_n;
+    xinfill_xreal_contr = xinfill_kstar_nonzero'*(icov\xinfill_kstar_zero)/cross_term_n;
+    
+    full_chi_squared = (xinfill_contr*count(kstar) + xreal_contr*count(.!kstar) + (xinfill_xreal_contr + xreal_xinfill_contr)*cross_term_n)/Np^2
+
+    org_chi_squared = xinfill_Np_minus_mean'*(icov\xinfill_Np_minus_mean)/Np^2;
+    return [count(.!kstar),count(kstar),cross_term_n,cross_term_n], [xreal_contr, xinfill_contr, xreal_xinfill_contr, xinfill_xreal_contr], full_chi_squared
+end   
