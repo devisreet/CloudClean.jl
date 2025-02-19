@@ -77,7 +77,7 @@ function proc_discrete_svd(x_locs,y_locs,raw_image,mask_image;Np=33,widx=129,wid
     bmaskim2 = zeros(Bool,sx0,sy0)
     goodpix = zeros(Bool,sx0,sy0)
 
-    prelim_infill!(testim,bmaskd,bimage,bimageI,testim2,bmaskim2,goodpix;widx=19,widy=19,ftype=ftype,verbose=verbose)
+    prelim_infill!(testim,bmaskd,bimage,bimageI,testim2,bmaskim2,goodpix;widx=19,widy=19,ftype=ftype)
     testim .= mod_im .- ref_im #fixes current overwrite for 0 infilling
 
     ## calculate the star farthest outside the edge of the image in x and y
@@ -210,7 +210,7 @@ function proc_discrete_dt(x_locs,y_locs,raw_image,mask_image;Np=33,widx=129,widy
     bmaskim2 = zeros(Bool,sx0,sy0)
     goodpix = zeros(Bool,sx0,sy0)
 
-    prelim_infill!(testim,bmaskd,bimage,bimageI,testim2,bmaskim2,goodpix;widx=19,widy=19,ftype=ftype,verbose=verbose)
+    prelim_infill!(testim,bmaskd,bimage,bimageI,testim2,bmaskim2,goodpix;widx=19,widy=19,ftype=ftype)
     testim .= mod_im .- ref_im #fixes current overwrite for 0 infilling
 
     ## calculate the star farthest outside the edge of the image in x and y
@@ -316,7 +316,7 @@ function proc_discrete_revised_dt(x_locs,y_locs,raw_image,mask_image;Np=33,widx=
     bmaskim2 = zeros(Bool,sx0,sy0)
     goodpix = zeros(Bool,sx0,sy0)
 
-    prelim_infill!(testim,bmaskd,bimage,bimageI,testim2,bmaskim2,goodpix;widx=19,widy=19,ftype=ftype, verbose=verbose)
+    prelim_infill!(testim,bmaskd,bimage,bimageI,testim2,bmaskim2,goodpix;widx=19,widy=19,ftype=ftype)
     testim .= mod_im .- ref_im #fixes current overwrite for 0 infilling
 
     ## calculate the star farthest outside the edge of the image in x and y
@@ -451,7 +451,7 @@ function proc_discrete_ctot_revised_dt(cov,μ, x_locs,y_locs,raw_image,mask_imag
 #     bmaskim2 = zeros(Bool,sx0,sy0)
 #     goodpix = zeros(Bool,sx0,sy0)
 
-#     prelim_infill!(testim,bmaskd,bimage,bimageI,testim2,bmaskim2,goodpix;widx=19,widy=19,ftype=ftype,verbose=verbose)
+#     prelim_infill!(testim,bmaskd,bimage,bimageI,testim2,bmaskim2,goodpix;widx=19,widy=19,ftype=ftype)
     testim .= mod_im .- ref_im #fixes current overwrite for 0 infilling
 
     ## calculate the star farthest outside the edge of the image in x and y
@@ -586,7 +586,7 @@ function proc_discrete_ctot_dt(cov,μ, x_locs,y_locs,raw_image,mask_image;Np=33,
 #     bmaskim2 = zeros(Bool,sx0,sy0)
 #     goodpix = zeros(Bool,sx0,sy0)
 
-#     prelim_infill!(testim,bmaskd,bimage,bimageI,testim2,bmaskim2,goodpix;widx=19,widy=19,ftype=ftype,verbose=verbose)
+#     prelim_infill!(testim,bmaskd,bimage,bimageI,testim2,bmaskim2,goodpix;widx=19,widy=19,ftype=ftype)
     testim .= mod_im .- ref_im #fixes current overwrite for 0 infilling
 
     ## calculate the star farthest outside the edge of the image in x and y
