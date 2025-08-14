@@ -715,7 +715,7 @@ function proc_discrete_revised_dt(x_locs,y_locs,raw_image,mask_image;Np=33,widx=
         flush(stdout)
     end
     if ndraw>0
-        # i may have used this function for something else later :( in which i used the mod_im-out_mean output
+        
         return predcovar, cov, kstar, μ, stat_out[1], stat_out[2] #mod_im[1].-out_mean[1:sx0, 1:sy0], mod_im[1].-out_draw[1:sx0, 1:sy0, :] 
     else
         return cov, mod_im[1].-out_mean[1:sx0, 1:sy0] 
