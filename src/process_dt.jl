@@ -687,25 +687,22 @@ function proc_discrete_revised_dt(x_locs,y_locs,raw_image,mask_image;Np=33,widx=
                 global kstar, kcond = gen_pix_mask_trivial(kmasked2d; Np=Np) #simpler version
                 data_in = in_image_raw[cov_stamp[1],cov_stamp[2]]
 
-                # try
-                    global predcovar, stat_out = condCovEst_wdiag_revised_dt(cov,μ,kstar,data_in,Np=Np,export_mean=true,n_draw=ndraw,seed=seed);
-                    data_in[kstar].=stat_out[1][kstar]
-                    in_image_raw[cov_stamp[1],cov_stamp[2]].=data_in
-                    
-                    data_in = out_mean[cov_stamp[1],cov_stamp[2]]
-                    data_in[kstar].=stat_out[1][kstar]
-                    out_mean[cov_stamp[1],cov_stamp[2]].=data_in
-                    for i=1:ndraw
-                        draw_in = out_draw[cov_stamp[1],cov_stamp[2],i]
-                        draw_in[kstar].= stat_out[2][kstar,i]
-                        out_draw[cov_stamp[1],cov_stamp[2],i].=draw_in
-                    end
-                    kmasked2d[kstar].=false
-                    in_bmaskd[cov_stamp[1],cov_stamp[2]].=kmasked2d
-                    cntStar0 += cntStar
-                # catch
-                #     println("Positive Definite Error")
-                # end
+                global predcovar, stat_out = condCovEst_wdiag_revised_dt(cov,μ,kstar,data_in,Np=Np,export_mean=true,n_draw=ndraw,seed=seed);
+                data_in[kstar].=stat_out[1][kstar]
+                in_image_raw[cov_stamp[1],cov_stamp[2]].=data_in
+                
+                data_in = out_mean[cov_stamp[1],cov_stamp[2]]
+                data_in[kstar].=stat_out[1][kstar]
+                out_mean[cov_stamp[1],cov_stamp[2]].=data_in
+                for i=1:ndraw
+                    draw_in = out_draw[cov_stamp[1],cov_stamp[2],i]
+                    draw_in[kstar].= stat_out[2][kstar,i]
+                    out_draw[cov_stamp[1],cov_stamp[2],i].=draw_in
+                end
+                kmasked2d[kstar].=false
+                in_bmaskd[cov_stamp[1],cov_stamp[2]].=kmasked2d
+                cntStar0 += cntStar
+
             end
         end
         cntStar0 += cntStar
